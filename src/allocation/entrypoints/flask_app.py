@@ -20,7 +20,7 @@ def add_batch():
     )
     messagebus.handle(event, unit_of_work.SqlAlchemyUnitOfWork())
     return "OK", 201
-
+#
 
 @app.route("/allocate", methods=["POST"])
 def allocate_endpoint():

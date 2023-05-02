@@ -32,7 +32,7 @@ def get_allocated_batch_ref(session, orderid, sku):
         dict(orderlineid=orderlineid),
     )
     return batchref
-
+#
 
 def test_uow_can_retrieve_a_batch_and_allocate_to_it(session_factory):
     session = session_factory()

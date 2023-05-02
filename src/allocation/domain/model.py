@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Optional, List, Set
 from . import events
-
+#
 
 class Product:
     def __init__(self, sku: str, batches: List[Batch], version_number: int = 0):

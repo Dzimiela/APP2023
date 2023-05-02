@@ -30,7 +30,7 @@ def test_happy_path_returns_201_and_allocated_batch():
 
     assert r.status_code == 201
     assert r.json()["batchref"] == earlybatch
-
+#
 
 @pytest.mark.usefixtures("postgres_db")
 @pytest.mark.usefixtures("restart_api")
