@@ -1,6 +1,8 @@
-# PG_Code
-https://www.cosmicpython.com/book/chapter_01_domain_model.html
+## Install Requirements
+#python -m venv .venv 
 
-https://github.com/cosmicpython/code
+#pip install pytest 
 
-https://github.com/ahuimanu/CIDM6330/tree/SPRING2023/projects/APP2023
+#pip install pytest sqlalchemy 
+
+#pip install -r requirements.txt
