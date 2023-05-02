@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
+
 from allocation import config
 from allocation.adapters import repository
 
@@ -18,8 +19,16 @@ class AbstractUnitOfWork(abc.ABC):
     def __exit__(self, *args):
         self.rollback()
 
-    @abc.abstractmethod
     def commit(self):
+        self._commit()
+
+    def collect_new_events(self):
+        for product in self.products.seen:
+            while product.events:
+                yield product.events.pop(0)
+
+    @abc.abstractmethod
+    def _commit(self):
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -27,12 +36,12 @@ class AbstractUnitOfWork(abc.ABC):
         raise NotImplementedError
 
 
-# this has been changed to create and call the session maker
 DEFAULT_SESSION_FACTORY = sessionmaker(
     bind=create_engine(
-        config.get_sqlite_filedb_uri(),
+        config.get_postgres_uri(),
+        isolation_level="REPEATABLE READ",
     )
-)()
+)
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
@@ -40,7 +49,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         self.session_factory = session_factory
 
     def __enter__(self):
-        self.session = self.session_factory  # type: Session
+        self.session = self.session_factory()  # type: Session
         self.products = repository.SqlAlchemyRepository(self.session)
         return super().__enter__()
 
@@ -48,7 +57,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         super().__exit__(*args)
         self.session.close()
 
-    def commit(self):
+    def _commit(self):
         self.session.commit()
 
     def rollback(self):
